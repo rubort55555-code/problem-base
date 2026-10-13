@@ -1,0 +1,48 @@
+name: Проблема в работе плагина
+description: Сообщить об ошибке или сбое
+title: "[Проблема] "
+body:
+  - type: input
+    id: author
+    attributes:
+      label: Автор
+      description: Ваше имя
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Версия плагина
+  - type: input
+    id: os
+    attributes:
+      label: Операционная система
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Серьёзность
+      options:
+        - Низкая
+        - Средняя
+        - Высокая
+        - Блокирует работу
+  - type: textarea
+    id: actual
+    attributes:
+      label: Что произошло
+      description: Опишите проблему своими словами
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Шаги воспроизведения
+  - type: textarea
+    id: expected
+    attributes:
+      label: Ожидаемый результат
+  - type: textarea
+    id: logs
+    attributes:
+      label: Лог / текст ошибки
+      render: text
