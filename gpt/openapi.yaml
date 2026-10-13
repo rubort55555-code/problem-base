@@ -1,0 +1,105 @@
+openapi: 3.1.0
+info:
+  title: База проблем плагина (GitHub Issues)
+  version: "1.0"
+  description: Создание, поиск, чтение и дополнение проблем в репозитории OWNER/REPO.
+servers:
+  - url: https://api.github.com
+# ВАЖНО: замените OWNER/REPO в путях ниже на свои значения.
+paths:
+  /search/issues:
+    get:
+      operationId: searchIssues
+      summary: Поиск проблем по ключевым словам
+      parameters:
+        - name: q
+          in: query
+          required: true
+          description: "Например: repo:OWNER/REPO is:issue экспорт падает"
+          schema: { type: string }
+        - name: per_page
+          in: query
+          schema: { type: integer, default: 10 }
+      responses:
+        "200": { description: Найденные проблемы }
+  /repos/OWNER/REPO/issues:
+    post:
+      operationId: createIssue
+      summary: Создать новую проблему
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, body]
+              properties:
+                title: { type: string }
+                body: { type: string, description: "Текст в формате ### Заголовок / значение, см. инструкцию GPT" }
+                labels:
+                  type: array
+                  items: { type: string }
+                  description: 'Всегда включать "source:gpt"'
+      responses:
+        "201": { description: Проблема создана }
+  /repos/OWNER/REPO/issues/{issue_number}:
+    get:
+      operationId: getIssue
+      summary: Прочитать проблему
+      parameters:
+        - name: issue_number
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: Проблема }
+    patch:
+      operationId: updateIssue
+      summary: Изменить описание, заголовок или закрыть проблему
+      parameters:
+        - name: issue_number
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title: { type: string }
+                body: { type: string }
+                state: { type: string, enum: [open, closed] }
+      responses:
+        "200": { description: Обновлено }
+  /repos/OWNER/REPO/issues/{issue_number}/comments:
+    get:
+      operationId: listComments
+      summary: Прочитать комментарии к проблеме
+      parameters:
+        - name: issue_number
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200": { description: Комментарии }
+    post:
+      operationId: addComment
+      summary: Добавить информацию к существующей проблеме
+      parameters:
+        - name: issue_number
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [body]
+              properties:
+                body: { type: string }
+      responses:
+        "201": { description: Комментарий добавлен }
